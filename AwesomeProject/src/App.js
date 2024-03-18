@@ -1,47 +1,27 @@
 import React from 'react';
 import {Button, Text, View} from 'react-native';
-import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
 
 const App = () => {
-  const signUp = () => {
-    auth()
-      .createUserWithEmailAndPassword(
-        'jane.doe@example.com',
-        'SuperSecretPassword!',
-      )
-      .then(res => console.log(res))
-      .catch(err => console.log(err));
+  const checkDB = () => {
+    const reference = database().ref('books/');
+    reference.once('value').then(snapshot => {
+      const response = snapshot.val();
+      console.log(response);
+    });
   };
-
-  const signIn = () => {
-    auth()
-      .signInWithEmailAndPassword(
-        'jane.doe@example.com',
-        'SuperSecretPassword!',
-      )
-      .then(res => console.log(res))
-      .catch(err => console.log(err));
-  };
-
-  const signOut = () => {
-    auth()
-      .signOut()
-      .then(res => console.log(res))
-      .catch(err => console.log(err));
-  };
-
-  const checkUser = () => {
-    const user = auth().currentUser;
-    console.log(user);
+  const listenDB = () => {
+    const reference = database().ref('books/');
+    reference.on('value', snapshot => {
+      console.log('User data: ', snapshot.val());
+    });
   };
 
   return (
     <View>
-      <Text>Hello fireBase</Text>
-      <Button title="Sign up" onPress={signUp} />
-      <Button title="Sign in" onPress={signIn} />
-      <Button title="Sign Out" onPress={signOut} />
-      <Button title="Check user" onPress={checkUser} />
+      <Text style={{fontSize: 70}}>Hello fireBase</Text>
+      <Button title="Check DB" onPress={checkDB} />
+      <Button title="Listen DB" onPress={listenDB} />
     </View>
   );
 };
